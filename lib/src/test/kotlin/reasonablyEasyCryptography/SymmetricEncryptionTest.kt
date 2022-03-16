@@ -1,6 +1,8 @@
-import org.junit.jupiter.api.Assertions.assertTrue
+package reasonablyEasyCryptography
+
 import org.junit.jupiter.api.Test
 import java.util.*
+import kotlin.test.assertTrue
 
 class SymmetricEncryptionTest {
     @Test
