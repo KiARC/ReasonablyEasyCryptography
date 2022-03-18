@@ -3,6 +3,7 @@ package reasonablyEasyCryptography
 import java.nio.ByteBuffer
 import java.security.SecureRandom
 import javax.crypto.Cipher
+import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.GCMParameterSpec
@@ -27,6 +28,28 @@ class SymmetricEncryptionHandler {
             val spec = PBEKeySpec(password.toCharArray(), salt, 65536, 256)
             val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1")
             return SecretKeySpec(factory.generateSecret(spec).encoded, "AES")
+        }
+        /**
+         * Generates a new SecretKey from random bytes which can be used for encryption
+         *
+         * @author Katherine Rose
+         * @return a new SecretKey instance
+         */
+        @JvmStatic
+        fun generateKey(keySize: Int = 2048): SecretKey {
+            val kg = KeyGenerator.getInstance("AES")
+            kg.init(keySize)
+            return kg.generateKey()
+        }
+        /**
+         * Assembles a new SecretKey from bytes which can be used for encryption
+         *
+         * @author Katherine Rose
+         * @param data the bytes to reconstruct, for example from SecretKey.encoded
+         * @return a new SecretKey instance
+         */
+        fun assembleKey(data: ByteArray): SecretKey {
+            return SecretKeySpec(data, 0, data.size, "AES")
         }
 
         /**
