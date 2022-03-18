@@ -29,6 +29,7 @@ class SymmetricEncryptionHandler {
             val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1")
             return SecretKeySpec(factory.generateSecret(spec).encoded, "AES")
         }
+
         /**
          * Generates a new SecretKey from random bytes which can be used for encryption
          *
@@ -41,6 +42,7 @@ class SymmetricEncryptionHandler {
             kg.init(keySize)
             return kg.generateKey()
         }
+
         /**
          * Assembles a new SecretKey from bytes which can be used for encryption
          *
