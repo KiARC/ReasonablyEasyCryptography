@@ -38,7 +38,7 @@ object SymmetricEncryptionHandler {
      */
     @JvmOverloads
     @JvmStatic
-    fun generateKey(keySize: Int = 2048): SecretKey {
+    fun generateKey(keySize: Int = 256): SecretKey {
         val kg = KeyGenerator.getInstance("AES")
         kg.init(keySize)
         return kg.generateKey()
