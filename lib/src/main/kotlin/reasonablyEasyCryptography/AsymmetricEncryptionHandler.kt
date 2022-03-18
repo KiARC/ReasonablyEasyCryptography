@@ -139,5 +139,34 @@ class AsymmetricEncryptionHandler {
             else if (exceptionOnFailure) throw SecurityException("Signature verification failed.")
             else null
         }
+
+        /**
+         * Verifies and decrypts data
+         *
+         * Verifies the data with the signature and verification key, then if the signature is valid, decrypts it with the decryption key
+         *
+         * This method is different from decryptAndVerify(data, sig, decryptionKey, verification, exceptionOnFailure) because it accepts a Pair instead, and you can easily use the output from encryptAndSign(data, encryptionKey, signingKey) directly
+         * @author Katherine Rose
+         * @param dataAndSig a Pair containing the data to decrypt and its signature
+         * @param decryptionKey the key to use for decryption
+         * @param verificationKey the key to use for verification of the signature
+         * @param exceptionOnFailure whether to throw an exception if the signature is invalid or not, if false it will return null instead
+         * @return the decrypted data, or null if the signature is invalid and exceptionOnFailure is false
+         * @throws SecurityException if the signature is invalid and exceptionOnFailure is true
+         */
+        @JvmStatic
+        fun decryptAndVerify(
+            dataAndSig: Pair<ByteArray, ByteArray>,
+            decryptionKey: PrivateKey,
+            verificationKey: PublicKey,
+            exceptionOnFailure: Boolean = true
+        ): ByteArray? {
+            return if (verify(dataAndSig.first, dataAndSig.second, verificationKey)) decrypt(
+                dataAndSig.first,
+                decryptionKey
+            )
+            else if (exceptionOnFailure) throw SecurityException("Signature verification failed.")
+            else null
+        }
     }
 }

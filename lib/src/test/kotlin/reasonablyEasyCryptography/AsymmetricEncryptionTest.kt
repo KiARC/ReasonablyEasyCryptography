@@ -34,4 +34,15 @@ class AsymmetricEncryptionTest {
             AsymmetricEncryptionHandler.decryptAndVerify(encrypted.first, encrypted.second, keys.private, keys.public)
         assertTrue(goal.contentEquals(decrypted))
     }
+
+    @Test
+    fun testAll2() {
+        val keys = AsymmetricEncryptionHandler.generateKeyPair()
+        val goal = ByteArray(1024)
+        Random().nextBytes(goal)
+        val encrypted = AsymmetricEncryptionHandler.encryptAndSign(goal, keys.public, keys.private)
+        val decrypted =
+            AsymmetricEncryptionHandler.decryptAndVerify(encrypted, keys.private, keys.public)
+        assertTrue(goal.contentEquals(decrypted))
+    }
 }
