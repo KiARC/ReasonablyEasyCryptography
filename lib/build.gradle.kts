@@ -16,7 +16,6 @@ dependencies {
 plugins {
     `java-library`
     kotlin("jvm") version "1.6.10"
-    java
     `maven-publish`
     application
 }
