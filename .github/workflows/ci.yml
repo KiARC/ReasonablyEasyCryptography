@@ -13,8 +13,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3.0.0
 
+      - name: Prepare Gradlew
+        run: chmod +x ./gradlew
+
       - name: Gradle Build
         run: ./gradlew build
-      
+
       - name: Gradle Test
         run: ./gradlew test
