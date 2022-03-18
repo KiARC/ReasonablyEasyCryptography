@@ -1,2 +1,1 @@
-rootProject.name = "ReasonablyEasyCryptography"
-include("lib")
+rootProject.name = "reasonably-easy-cryptography"
