@@ -35,5 +35,4 @@ tasks.jar {
             "Implementation-Version" to project.version
         )
     }
-    baseName = "REC"
 }
