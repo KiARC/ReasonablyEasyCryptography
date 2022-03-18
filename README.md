@@ -2,12 +2,18 @@
 
 ### *Tired of libraries with great features but a huge amount of setup? This is the repo for you.*
 
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/KiARC/ReasonablyEasyCryptography/CI?style=for-the-badge)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/KiARC/ReasonablyEasyCryptography?style=for-the-badge)
+![GitHub Release Date](https://img.shields.io/github/release-date/KiARC/ReasonablyEasyCryptography?style=for-the-badge)
+
 Welcome to **Reasonably Easy Cryptography**, a library designed to do most of the setup for you. Although configuration
 is great, sometimes what you need is a library that just works. That's why this one exists. The goal of this project is
 to create a library that enables anyone to perform encryption and cryptography with minimal work or understanding of the
 underlying principals.
 
 ## Usage
+### Importing into a project
+You can either directly add a release JAR (or one built with `gradle jar`), or you can use `gradle publishToMavenLocal` to add it to your local Maven repository. If you add it to `mavenLocal` it can be accessed at `com.katiearose:reasonably-easy-cryptography:[release]`.
 ### Symmetric Encryption via AES-GCM
 #### Encrypt data with a key object
 ```kotlin
