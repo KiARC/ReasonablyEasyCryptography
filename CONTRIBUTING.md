@@ -9,7 +9,7 @@ command `npm i -g commitizen cz-conventional-changelog`. Then, add the following
 
 After that, commits can be made with the command `git cz [arguments]`.
 
-For reference, here is a table which explains how commits are applied to new releases:
+For reference, here is a table which explains how SemVers are calculated:
 
 | Commit Type     | Version Level |
 |:----------------|--------------:|
