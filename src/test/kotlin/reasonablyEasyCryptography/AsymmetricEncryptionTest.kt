@@ -31,7 +31,7 @@ class AsymmetricEncryptionTest {
         Random().nextBytes(goal)
         val encrypted = AsymmetricEncryptionHandler.encryptAndSign(goal, keys.public, keys.private)
         val decrypted =
-            AsymmetricEncryptionHandler.decryptAndVerify(encrypted.first, encrypted.second, keys.private, keys.public)
+            AsymmetricEncryptionHandler.decryptAndVerify(encrypted, keys.private, keys.public)
         assertTrue(goal.contentEquals(decrypted))
     }
 
@@ -42,7 +42,7 @@ class AsymmetricEncryptionTest {
         Random().nextBytes(goal)
         val encrypted = AsymmetricEncryptionHandler.encryptAndSign(goal, keys.public, keys.private)
         val decrypted =
-            AsymmetricEncryptionHandler.decryptAndVerify(encrypted, keys.private, keys.public)
+            AsymmetricEncryptionHandler.decryptAndVerify(encrypted.data, encrypted.signature, keys.private, keys.public)
         assertTrue(goal.contentEquals(decrypted))
     }
 }
