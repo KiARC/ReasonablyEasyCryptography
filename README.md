@@ -62,20 +62,18 @@ val isValid = AsymmetricEncryptionHandler.verify(data, signature, key)  //Where 
 val output = AsymmetricEncryptionHandler.encryptAndSign(data, publicKey, privateKey)    //Where data is a ByteArray to be signed and encrypted, 
                                                                                         //publicKey is the key to encrypt the data with and
                                                                                         //privateKey is the key to sign the data with. The result
-                                                                                        //is a Pair in which output.first is the encrypted data and
-                                                                                        //output.second is its signature
+                                                                                        //is a SignedDataContainer containing the data and its signature
 ```
 ### Decrypt and Verify Data in One Call
 ```kotlin
-val decrypted = AsymmetricEncryptionHandler.decryptAndVerify(data, signature, privateKey, publicKey, exceptionOnFailure)
-//Where data is a ByteArray to be decrypted, signature is the signature on that data that must be verified,
-//privateKey is the key to decrypt the data with, publicKey is the key to verify the signature with, and
-//exceptionOnFailure is a boolean representing whether the method should throw an exception if verification fails or not.
-//The result is the decrypted data if the signature is valid, or null if it is invalid and exceptionOnFailure is false.
-//exceptionOnFailure can be omitted, and the default value is true.
+val decrypted = AsymmetricEncryptionHandler.decryptAndVerify(data, privateKey, publicKey, exceptionOnFailure)
+//Where data is a SignedDataContainer, privateKey is the key to decrypt the data with, publicKey is the key to verify the
+//signature with, and exceptionOnFailure is a boolean representing whether the method should throw an exception if verification
+//fails or not. The result is the decrypted data if the signature is valid, or null if it is invalid and exceptionOnFailure is
+//false. exceptionOnFailure can be omitted, and the default value is true.
 ```
 ### Alternative Method to Decrypt and Verify Data in One Call
 ```kotlin
-val decrypted = AsymmetricEncryptionHandler.decryptAndVerify(data, privateKey, publicKey, exceptionOnFailure)
-//Where data is a Pair in the format (encryptedData, signature), and otherwise all is the same as the above method.
+val decrypted = AsymmetricEncryptionHandler.decryptAndVerify(data, signature, privateKey, publicKey, exceptionOnFailure)
+//Same as above, except that instead of a single SignedDataContainer this method takes the two ByteArrays separately.
 ```
