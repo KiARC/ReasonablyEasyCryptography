@@ -55,7 +55,7 @@ object AsymmetricEncryptionHandler {
      */
     @JvmStatic
     fun decrypt(data: ByteArray, key: PrivateKey): ByteArray {
-        val c = Cipher.getInstance("RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING")
+        val c = Cipher.getInstance("RSA/ECB/OAEPwithSHA-256andMGF1Padding")
         c.init(Cipher.DECRYPT_MODE, key)
         val buffer = ByteBuffer.wrap(data)
         val kB = ByteArray(256)
