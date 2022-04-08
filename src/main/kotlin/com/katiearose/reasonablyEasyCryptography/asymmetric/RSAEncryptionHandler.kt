@@ -1,10 +1,11 @@
-package reasonablyEasyCryptography
+package com.katiearose.reasonablyEasyCryptography.asymmetric
 
+import com.katiearose.reasonablyEasyCryptography.symmetric.AESEncryptionHandler
 import java.nio.ByteBuffer
 import java.security.*
 import javax.crypto.Cipher
 
-object AsymmetricEncryptionHandler {
+object RSAEncryptionHandler {
     /**
      * Generates an RSA KeyPair of a given keysize to be used for encryption
      *
@@ -32,8 +33,8 @@ object AsymmetricEncryptionHandler {
      */
     @JvmStatic
     fun encrypt(data: ByteArray, key: PublicKey): ByteArray {
-        val k = SymmetricEncryptionHandler.generateKey(128)
-        val encryptedData = SymmetricEncryptionHandler.encrypt(data, k)
+        val k = AESEncryptionHandler.generateKey(128)
+        val encryptedData = AESEncryptionHandler.encrypt(data, k)
         val c = Cipher.getInstance("RSA/ECB/OAEPwithSHA-256andMGF1Padding")
         c.init(Cipher.ENCRYPT_MODE, key)
         val kEnc = c.doFinal(k.encoded)
@@ -62,8 +63,8 @@ object AsymmetricEncryptionHandler {
         buffer.get(kB)
         val enc = ByteArray(buffer.remaining())
         buffer.get(enc)
-        val k = SymmetricEncryptionHandler.assembleKey(c.doFinal(kB))
-        return SymmetricEncryptionHandler.decrypt(enc, k)
+        val k = AESEncryptionHandler.assembleKey(c.doFinal(kB))
+        return AESEncryptionHandler.decrypt(enc, k)
     }
 
     /**

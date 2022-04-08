@@ -1,4 +1,4 @@
-package reasonablyEasyCryptography
+package com.katiearose.reasonablyEasyCryptography.asymmetric
 
 data class SignedDataContainer(val data: ByteArray, val signature: ByteArray) {
     override fun equals(other: Any?): Boolean {

@@ -1,4 +1,4 @@
-package reasonablyEasyCryptography
+package com.katiearose.reasonablyEasyCryptography.symmetric
 
 import java.nio.ByteBuffer
 import java.security.SecureRandom
@@ -11,7 +11,7 @@ import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
 
-object SymmetricEncryptionHandler {
+object AESEncryptionHandler {
     private const val algorithm = "AES/GCM/NoPadding"
 
     /**
