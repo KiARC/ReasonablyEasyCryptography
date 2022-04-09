@@ -1,5 +1,5 @@
 group = "com.katiearose"
-version = "1.0.1"
+version = "2.1.0"
 
 repositories {
     mavenCentral()
@@ -42,7 +42,7 @@ publishing {
         create<MavenPublication>("mavenJava") {
             groupId = "com.katiearose"
             artifactId = "reasonably-easy-cryptography"
-            version = "1.0.1"
+            version = "2.1.0"
             from(components["java"])
             pom {
                 name.set("Reasonably Easy Cryptography")
