@@ -1,4 +1,4 @@
-package reasonablyEasyCryptography
+package com.katiearose.reasonablyEasyCryptography
 
 import com.katiearose.reasonablyEasyCryptography.asymmetric.PEMHandler
 import com.katiearose.reasonablyEasyCryptography.asymmetric.RSAEncryptionHandler
