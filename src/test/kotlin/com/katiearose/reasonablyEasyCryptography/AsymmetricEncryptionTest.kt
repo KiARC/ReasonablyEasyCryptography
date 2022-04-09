@@ -1,6 +1,7 @@
-package com.katiearose.reasonablyEasyCryptography
+package reasonablyEasyCryptography
 
 import org.junit.jupiter.api.Test
+import com.katiearose.reasonablyEasyCryptography.asymmetric.PEMHandler
 import com.katiearose.reasonablyEasyCryptography.asymmetric.RSAEncryptionHandler
 import com.katiearose.reasonablyEasyCryptography.asymmetric.SignedDataContainer
 import java.util.*
@@ -54,10 +55,10 @@ class AsymmetricEncryptionTest {
         val keys = RSAEncryptionHandler.generateKeyPair()
         val goal = ByteArray(1024)
         Random().nextBytes(goal)
-        val fakeKey = ByteArray(256)
-        Random().nextBytes(fakeKey)
+        val fakeSig = ByteArray(256)
+        Random().nextBytes(fakeSig)
         val encrypted = RSAEncryptionHandler.encryptAndSign(goal, keys.public, keys.private)
-        val badSig = SignedDataContainer(encrypted.data, fakeKey)
+        val badSig = SignedDataContainer(encrypted.data, fakeSig)
         var failed = false
         try {
             val decrypted = RSAEncryptionHandler.decryptAndVerify(badSig, keys.private, keys.public)
@@ -72,12 +73,12 @@ class AsymmetricEncryptionTest {
         val keys = RSAEncryptionHandler.generateKeyPair()
         val goal = ByteArray(1024)
         Random().nextBytes(goal)
-        val fakeKey = ByteArray(256)
-        Random().nextBytes(fakeKey)
+        val fakeSig = ByteArray(256)
+        Random().nextBytes(fakeSig)
         val encrypted = RSAEncryptionHandler.encryptAndSign(goal, keys.public, keys.private)
         var failed = false
         try {
-            val decrypted = RSAEncryptionHandler.decryptAndVerify(encrypted.data, fakeKey, keys.private, keys.public)
+            val decrypted = RSAEncryptionHandler.decryptAndVerify(encrypted.data, fakeSig, keys.private, keys.public)
         } catch (e: SecurityException) {
             failed = true
         }
@@ -89,10 +90,10 @@ class AsymmetricEncryptionTest {
         val keys = RSAEncryptionHandler.generateKeyPair()
         val goal = ByteArray(1024)
         Random().nextBytes(goal)
-        val fakeKey = ByteArray(256)
-        Random().nextBytes(fakeKey)
+        val fakeSig = ByteArray(256)
+        Random().nextBytes(fakeSig)
         val encrypted = RSAEncryptionHandler.encryptAndSign(goal, keys.public, keys.private)
-        val badSig = SignedDataContainer(encrypted.data, fakeKey)
+        val badSig = SignedDataContainer(encrypted.data, fakeSig)
         val decrypted = RSAEncryptionHandler.decryptAndVerify(badSig, keys.private, keys.public, false)
         assertNull(decrypted)
     }
@@ -102,10 +103,33 @@ class AsymmetricEncryptionTest {
         val keys = RSAEncryptionHandler.generateKeyPair()
         val goal = ByteArray(1024)
         Random().nextBytes(goal)
-        val fakeKey = ByteArray(256)
-        Random().nextBytes(fakeKey)
+        val fakeSig = ByteArray(256)
+        Random().nextBytes(fakeSig)
         val encrypted = RSAEncryptionHandler.encryptAndSign(goal, keys.public, keys.private)
-        val decrypted = RSAEncryptionHandler.decryptAndVerify(encrypted.data, fakeKey, keys.private, keys.public, false)
+        val decrypted = RSAEncryptionHandler.decryptAndVerify(encrypted.data, fakeSig, keys.private, keys.public, false)
         assertNull(decrypted)
+    }
+
+    @Test
+    fun testPemGenAndRead() {
+        val keys = RSAEncryptionHandler.generateKeyPair()
+        val goal = ByteArray(1024)
+        Random().nextBytes(goal)
+        val encrypted = RSAEncryptionHandler.encryptAndSign(goal, keys.public, keys.private)
+        val pem = PEMHandler.keyPairToPem(keys)
+        val keysNew = PEMHandler.pemPairToKeyPair(pem)
+        val decrypted = RSAEncryptionHandler.decryptAndVerify(encrypted, keysNew.private, keysNew.public)
+        assertTrue(goal.contentEquals(decrypted))
+    }
+    @Test
+    fun testPemGenAndRead2() {
+        val keys = RSAEncryptionHandler.generateKeyPair()
+        val goal = ByteArray(1024)
+        Random().nextBytes(goal)
+        val encrypted = RSAEncryptionHandler.encryptAndSign(goal, keys.public, keys.private)
+        val pem = PEMHandler.keyPairToPem(keys)
+        val keysNew = PEMHandler.pemPairToKeyPair(pem)
+        val decrypted = RSAEncryptionHandler.decryptAndVerify(encrypted.data, encrypted.signature, keysNew.private, keysNew.public)
+        assertTrue(goal.contentEquals(decrypted))
     }
 }
