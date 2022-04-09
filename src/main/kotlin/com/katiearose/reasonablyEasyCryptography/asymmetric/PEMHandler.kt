@@ -10,11 +10,27 @@ object PEMHandler {
     private val encoder: Base64.Encoder = Base64.getMimeEncoder()
     private val decoder: Base64.Decoder = Base64.getMimeDecoder()
 
+    /**
+     * Wrapper method around keyToPem() that parses a whole KeyPair automatically
+     *
+     * @author Katherine Rose
+     * @param keys the KeyPair to parse
+     * @return a PEMPair containing the PEM data for each of the keys in the KeyPair
+     */
     @JvmStatic
     fun keyPairToPem(keys: KeyPair): PEMPair {
         return PEMPair(keyToPem(keys.public), keyToPem(keys.private))
     }
 
+    /**
+     * Encodes a Key to a PEM Object
+     *
+     * Automatically detects the algorithm and whether the key is public or private, then assembles a PEM String
+     *
+     * @author Katherine Rose
+     * @param key the Key to parse
+     * @return the PEM data for the key
+     */
     @JvmStatic
     fun keyToPem(key: Key): String {
         val encodedKey = String(encoder.encode(key.encoded))
@@ -23,6 +39,15 @@ object PEMHandler {
         return "-----BEGIN $algorithm $type KEY-----${System.lineSeparator()}$encodedKey${System.lineSeparator()}-----END $algorithm $type KEY-----"
     }
 
+    /**
+     * Assembles a Key from a PEM Object
+     *
+     * Automatically detects the algorithm and whether the key is public or private, then assembles a Key from the encoded data
+     *
+     * @author Katherine Rose
+     * @param pem the PEM data to parse
+     * @return a new Key, either a PublicKey or a PrivateKey depending on the data passed to it.
+     */
     @JvmStatic
     fun pemToKey(pem: String): Key {
         val split = pem.split(System.lineSeparator())
@@ -37,6 +62,13 @@ object PEMHandler {
         )
     }
 
+    /**
+     * Wrapper method around pemToKey() that parses a whole PEMPair automatically
+     *
+     * @author Katherine Rose
+     * @param pem the PEMPair to parse
+     * @return a KeyPair derived from the PEM data contained in the PEMPair
+     */
     @JvmStatic
     fun pemPairToKeyPair(pem: PEMPair): KeyPair {
         val public = pemToKey(pem.public)
