@@ -1,7 +1,7 @@
 package com.katiearose.reasonablyEasyCryptography
 
-import org.junit.jupiter.api.Test
 import com.katiearose.reasonablyEasyCryptography.symmetric.AESEncryptionHandler
+import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertTrue
 
