@@ -121,6 +121,7 @@ class AsymmetricEncryptionTest {
         val decrypted = RSAEncryptionHandler.decryptAndVerify(encrypted, keysNew.private, keysNew.public)
         assertTrue(goal.contentEquals(decrypted))
     }
+
     @Test
     fun testPemGenAndRead2() {
         val keys = RSAEncryptionHandler.generateKeyPair()
@@ -129,7 +130,8 @@ class AsymmetricEncryptionTest {
         val encrypted = RSAEncryptionHandler.encryptAndSign(goal, keys.public, keys.private)
         val pem = PEMHandler.keyPairToPem(keys)
         val keysNew = PEMHandler.pemPairToKeyPair(pem)
-        val decrypted = RSAEncryptionHandler.decryptAndVerify(encrypted.data, encrypted.signature, keysNew.private, keysNew.public)
+        val decrypted =
+            RSAEncryptionHandler.decryptAndVerify(encrypted.data, encrypted.signature, keysNew.private, keysNew.public)
         assertTrue(goal.contentEquals(decrypted))
     }
 }

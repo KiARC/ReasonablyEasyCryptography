@@ -25,7 +25,8 @@ class SymmetricEncryptionTest {
         assertTrue(goal.contentEquals(decrypted))
     }
 
-    @Test fun testKeyGen() {
+    @Test
+    fun testKeyGen() {
         val k1 = AESEncryptionHandler.generateKey()
         val k2 = AESEncryptionHandler.generateKey(128)
         val k3 = AESEncryptionHandler.stringToKey("test")
