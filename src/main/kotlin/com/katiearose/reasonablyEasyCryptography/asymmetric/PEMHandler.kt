@@ -1,5 +1,7 @@
 package com.katiearose.reasonablyEasyCryptography.asymmetric
 
+import java.io.ByteArrayInputStream
+import java.io.InputStreamReader
 import java.security.*
 import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
@@ -32,11 +34,11 @@ object PEMHandler {
      * @return the PEM data for the key
      */
     @JvmStatic
-    fun keyToPem(key: Key): String {
+    fun keyToPem(key: Key): PEMObject {
         val encodedKey = String(encoder.encode(key.encoded))
         val algorithm = key.algorithm
-        val type = if (key.javaClass.name.contains("private", true)) "PRIVATE" else "PUBLIC"
-        return "-----BEGIN $algorithm $type KEY-----${System.lineSeparator()}$encodedKey${System.lineSeparator()}-----END $algorithm $type KEY-----"
+        val type = if (key.format == "PKCS#8") "PRIVATE" else "PUBLIC"
+        return PEMObject("", algorithm, type, encodedKey)
     }
 
     /**
@@ -49,15 +51,14 @@ object PEMHandler {
      * @return a new Key, either a PublicKey or a PrivateKey depending on the data passed to it.
      */
     @JvmStatic
-    fun pemToKey(pem: String): Key {
-        val split = pem.split(System.lineSeparator())
-        val firstLine = split[0].split(" ")
-        val type = if (firstLine[2].equals("PRIVATE", true)) 'r' else 'u'
-        val slice = split.slice(1 until split.size - 1)
-        val sliceString = slice.joinToString(System.lineSeparator())
-        val decoded = decoder.decode(sliceString)
-        val keyFactory = KeyFactory.getInstance(firstLine[1])
-        return if (type == 'r') keyFactory.generatePrivate(PKCS8EncodedKeySpec(decoded)) else keyFactory.generatePublic(
+    fun pemToKey(pem: PEMObject): Key {
+        val decoded = decoder.decode(pem.data)
+        val keyFactory = KeyFactory.getInstance(pem.algorithm)
+        return if (pem.type.equals(
+                "PRIVATE",
+                true
+            )
+        ) keyFactory.generatePrivate(PKCS8EncodedKeySpec(decoded)) else keyFactory.generatePublic(
             X509EncodedKeySpec(decoded)
         )
     }
@@ -74,5 +75,41 @@ object PEMHandler {
         val public = pemToKey(pem.public)
         val private = pemToKey(pem.private)
         return KeyPair(public as PublicKey, private as PrivateKey)
+    }
+
+    @JvmStatic
+    fun stringToPemObject(input: String): PEMObject {
+        val lines = ArrayDeque(input.split(System.lineSeparator()))
+        var data = ""
+        while (!lines.peek().contains("-----BEGIN")) {
+            lines.pop()
+        }
+        val header = lines.pop().split(" ")
+        val algorithm = header[1]
+        val type = header[2]
+        while (!lines.peek().contains("-----END")) {
+            data += lines.pop()
+        }
+        return PEMObject("", algorithm, type, data)
+    }
+
+    @JvmStatic
+    fun parsePemStream(input: ByteArrayInputStream): List<PEMObject> {
+        val reader = InputStreamReader(input)
+        val lines = ArrayDeque(reader.readLines())
+        val readPems = ArrayDeque<PEMObject>()
+        while (lines.isNotEmpty()) {
+            var next = ""
+            while (!lines.peek().contains("-----BEGIN")) {
+                lines.pop()
+            }
+            next += "${lines.pop()}${System.lineSeparator()}"
+            while (!lines.peek().contains("-----END")) {
+                next += "${lines.pop()}${System.lineSeparator()}"
+            }
+            next += "${lines.pop()}${System.lineSeparator()}"
+            readPems.add(stringToPemObject(next))
+        }
+        return readPems.toList()
     }
 }

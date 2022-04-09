@@ -1,6 +1,6 @@
 package com.katiearose.reasonablyEasyCryptography.asymmetric
 
-data class PEMPair(val public: String, val private: String) {
+data class PEMPair(val public: PEMObject, val private: PEMObject) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -17,5 +17,9 @@ data class PEMPair(val public: String, val private: String) {
         var result = private.hashCode()
         result = 31 * result + public.hashCode()
         return result
+    }
+
+    override fun toString(): String {
+        return "$public${System.lineSeparator()}$private"
     }
 }

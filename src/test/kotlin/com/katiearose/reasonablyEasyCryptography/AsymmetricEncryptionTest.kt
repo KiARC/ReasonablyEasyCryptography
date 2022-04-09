@@ -4,6 +4,9 @@ import com.katiearose.reasonablyEasyCryptography.asymmetric.PEMHandler
 import com.katiearose.reasonablyEasyCryptography.asymmetric.RSAEncryptionHandler
 import com.katiearose.reasonablyEasyCryptography.asymmetric.SignedDataContainer
 import org.junit.jupiter.api.Test
+import java.security.Key
+import java.security.PrivateKey
+import java.security.PublicKey
 import java.util.*
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -133,5 +136,27 @@ class AsymmetricEncryptionTest {
         val decrypted =
             RSAEncryptionHandler.decryptAndVerify(encrypted.data, encrypted.signature, keysNew.private, keysNew.public)
         assertTrue(goal.contentEquals(decrypted))
+    }
+
+    @Test
+    fun testPemStream() {
+        val num = 10
+        val keys = ArrayList<Key>()
+        for (ignored in 0 until num) {
+            val k = RSAEncryptionHandler.generateKeyPair()
+            keys.add(k.private)
+            keys.add(k.public)
+        }
+        var string = ""
+        for (i in 0 until num) {
+            string += "${PEMHandler.keyToPem(keys[i])}${System.lineSeparator()}"
+        }
+        val keysUnpemed = ArrayList<Key>()
+        PEMHandler.parsePemStream(string.byteInputStream()).forEach {
+            keysUnpemed.add(if (it.type == "PRIVATE") PEMHandler.pemToKey(it) as PrivateKey else PEMHandler.pemToKey(it) as PublicKey)
+        }
+        for (i in 0 until num) {
+            assertTrue(keysUnpemed[i].encoded.contentEquals(keys[i].encoded))
+        }
     }
 }
