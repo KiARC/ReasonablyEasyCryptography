@@ -11,7 +11,7 @@ object PemAndUnPemAWholeBunchOfKeys {
         //This code doesn't pertain as much to the actual example, but I need a
         //list of keys and decided this would be a good way to do it
         val keys = ArrayList<Key>()
-        for (i in 1..10 ) {
+        for (i in 1..10) {
             val k = RSAEncryptionHandler.generateKeyPair()
             keys.add(k.private)
             keys.add(k.public)
