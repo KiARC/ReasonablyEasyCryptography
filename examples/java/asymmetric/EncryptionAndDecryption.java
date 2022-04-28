@@ -13,8 +13,6 @@ public class EncryptionAndDecryption {
         //Encrypt data
         byte[] encrypted = RSAEncryptionHandler.encrypt(plaintext.getBytes(), keys.getPublic());
         //Decrypt data
-        byte[] decrypted = RSAEncryptionHandler.decrypt(encrypted, keys.getPrivate());
-        //And here's your string back
-        String deciphered = new String(decrypted);
+        String decrypted = new String(RSAEncryptionHandler.decrypt(encrypted, keys.getPrivate()));
     }
 }

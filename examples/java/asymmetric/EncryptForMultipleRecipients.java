@@ -22,13 +22,10 @@ public class EncryptForMultipleRecipients {
         //Encrypt data
         byte[] encrypted = RSAEncryptionHandler.encrypt(plaintext.getBytes(), keys);
         //Decrypt data for recipient 1
-        byte[] decrypted1 = RSAEncryptionHandler.decrypt(encrypted, recipient1.getPrivate());
+        String decrypted1 = new String(RSAEncryptionHandler.decrypt(encrypted, recipient1.getPrivate()));
         //Decrypt data for recipient 2
-        byte[] decrypted2 = RSAEncryptionHandler.decrypt(encrypted, recipient2.getPrivate());
-        //And convert them to strings
-        String data1 = new String(decrypted1);
-        String data2 = new String(decrypted2);
-        //plaintext == data1 == data2, and you only have to send or store one message that
+        String decrypted2 = new String(RSAEncryptionHandler.decrypt(encrypted, recipient2.getPrivate()));
+        //plaintext == decrypted1 == decrypted2, and you only have to send or store one message that
         //both keys can decrypt
     }
 }

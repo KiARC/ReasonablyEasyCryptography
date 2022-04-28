@@ -12,8 +12,6 @@ object EncryptionAndDecryption {
         //Encrypt data
         val encrypted = RSAEncryptionHandler.encrypt(plaintext.toByteArray(), keys.public)
         //Decrypt data
-        val decrypted = RSAEncryptionHandler.decrypt(encrypted, keys.private)
-        //And here's your string back
-        val deciphered = String(decrypted)
+        val decrypted = String(RSAEncryptionHandler.decrypt(encrypted, keys.private))
     }
 }

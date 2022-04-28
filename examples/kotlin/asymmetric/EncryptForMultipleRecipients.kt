@@ -24,13 +24,10 @@ object EncryptForMultipleRecipients {
         //Encrypt data
         val encrypted = encrypt(plaintext.toByteArray(), keys)
         //Decrypt data for recipient 1
-        val decrypted1 = decrypt(encrypted, recipient1.private)
+        val decrypted1 = String(decrypt(encrypted, recipient1.private))
         //Decrypt data for recipient 2
-        val decrypted2 = decrypt(encrypted, recipient2.private)
-        //And convert them to strings
-        val data1 = String(decrypted1)
-        val data2 = String(decrypted2)
-        //plaintext == data1 == data2, and you only have to send or store one message that
+        val decrypted2 = String(decrypt(encrypted, recipient2.private))
+        //plaintext == decrypted1 == decrypted2, and you only have to send or store one message that
         //both keys can decrypt
     }
 }

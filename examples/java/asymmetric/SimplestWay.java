@@ -21,8 +21,6 @@ public class SimplestWay {
         //in which case it will just return null. If you don't actually care about the
         //signature, just decrypt it outright, don't bother checking unless the validity matters.
         //You can also pass the data and the signature separately but a SignedDataContainer makes life easier.
-        byte[] decrypted = RSAEncryptionHandler.decryptAndVerify(sdc, keys.getPrivate(), keys.getPublic());
-        //Convert it back to a string, and you're back where you started
-        String deciphered = new String(decrypted);
+        String decrypted = new String(RSAEncryptionHandler.decryptAndVerify(sdc, keys.getPrivate(), keys.getPublic()));
     }
 }

@@ -13,8 +13,7 @@ public class KeyObject {
         //Encrypt the plaintext with it
         byte[] ciphertext = AESEncryptionHandler.encrypt(plaintext.getBytes(), key);
         //Decrypt it with the same key
-        byte[] decrypted = AESEncryptionHandler.decrypt(ciphertext, key);
+        String decrypted = new String(AESEncryptionHandler.decrypt(ciphertext, key));
         //Et voila!
-        String deciphered = new String(decrypted);
     }
 }

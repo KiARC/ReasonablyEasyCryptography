@@ -19,8 +19,6 @@ object SimplestWay {
         //in which case it will just return null. If you don't actually care about the
         //signature, just decrypt it outright, don't bother checking unless the validity matters.
         //You can also pass the data and the signature separately but a SignedDataContainer makes life easier.
-        val decrypted = RSAEncryptionHandler.decryptAndVerify(sdc, keys.private, keys.public)
-        //Convert it back to a string, and you're back where you started
-        val deciphered = String(decrypted!!)
+        val decrypted = String(RSAEncryptionHandler.decryptAndVerify(sdc, keys.private, keys.public)!!)
     }
 }

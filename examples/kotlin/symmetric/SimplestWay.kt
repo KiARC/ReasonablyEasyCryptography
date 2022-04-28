@@ -10,8 +10,6 @@ object SimplestWay {
         //Encrypt it with a password
         val ciphertext = AESEncryptionHandler.encrypt(plaintext.toByteArray(), "password")
         //Decrypt it with the same password
-        val decrypted = AESEncryptionHandler.decrypt(ciphertext, "password")
-        //Convert it back to a string, and you're back where you started
-        val deciphered = String(decrypted)
+        val decrypted = String(AESEncryptionHandler.decrypt(ciphertext, "password"))
     }
 }

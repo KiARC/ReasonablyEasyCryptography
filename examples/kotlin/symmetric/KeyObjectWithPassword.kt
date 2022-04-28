@@ -12,8 +12,6 @@ object KeyObjectWithPassword {
         //Encrypt the plaintext with it
         val ciphertext = AESEncryptionHandler.encrypt(plaintext.toByteArray(), key)
         //Decrypt it with the same key
-        val decrypted = AESEncryptionHandler.decrypt(ciphertext, key)
-        //And we're done
-        val deciphered = String(decrypted)
+        val decrypted = String(AESEncryptionHandler.decrypt(ciphertext, key))
     }
 }

@@ -9,8 +9,6 @@ public class SimplestWay {
         //Encrypt it with a password
         byte[] ciphertext = AESEncryptionHandler.encrypt(plaintext.getBytes(), "password");
         //Decrypt it with the same password
-        byte[] decrypted = AESEncryptionHandler.decrypt(ciphertext, "password");
-        //Convert it back to a string, and you're back where you started
-        String deciphered = new String(decrypted);
+        String decrypted = new String(AESEncryptionHandler.decrypt(ciphertext, "password"));
     }
 }
