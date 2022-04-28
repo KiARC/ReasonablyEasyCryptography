@@ -75,7 +75,7 @@ object RSAEncryptionHandler {
         var totalSize = 0
         for (s in encryptedSecrets) totalSize += s.size
         val output = ByteBuffer.allocate(totalSize + encryptedData.size + 1)
-        output.put((keys.size.toUByte()).toByte()) //Janky math to hopefully make this work
+        output.put(((keys.size - 1).toUByte()).toByte()) //Janky math to hopefully make this work
         for (s in encryptedSecrets) output.put(s)
         output.put(encryptedData)
         return output.array()
