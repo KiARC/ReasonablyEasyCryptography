@@ -99,33 +99,27 @@ object RSAEncryptionHandler {
         val rbyte = ByteArray(1)
         buffer.get(rbyte)
         val recipientCount = rbyte[0].toUByte()
-        if (recipientCount == 0.toUByte()) {
+        val kbs = ArrayDeque<ByteArray>(recipientCount.toInt())
+        for (i in 0 until recipientCount.toInt() + 1) {
             val kB = ByteArray(256)
             buffer.get(kB)
-            val enc = ByteArray(buffer.remaining())
-            buffer.get(enc)
-            val k = AESEncryptionHandler.assembleKey(c.doFinal(kB))
-            return AESEncryptionHandler.decrypt(enc, k)
-        } else {
-            val kbs = ArrayDeque<ByteArray>(recipientCount.toInt())
-            for (i in 0 until recipientCount.toInt()) {
-                val kB = ByteArray(256)
-                buffer.get(kB)
-                kbs.addFirst(kB)
-            }
-            var foundKey = false
-            var k: SecretKey? = null
-            while (!foundKey) {
-                try {
-                    k = AESEncryptionHandler.assembleKey(c.doFinal(kbs.removeFirst()))
-                    foundKey = true
-                } catch (_: BadPaddingException) { /*Ignore that, it just means that wasn't the right one*/
-                }
-            }
-            val enc = ByteArray(buffer.remaining())
-            buffer.get(enc)
-            return AESEncryptionHandler.decrypt(enc, k!!)
+            kbs.addFirst(kB)
         }
+        var foundKey = false
+        var k: SecretKey? = null
+        while (!foundKey) {
+            try {
+                k = AESEncryptionHandler.assembleKey(c.doFinal(kbs.removeFirst()))
+                foundKey = true
+            } catch (_: BadPaddingException) { /*Ignore that, it just means that wasn't the right one*/
+            }
+        }
+        if (k == null) {
+            throw SecurityException("Could not successfully decrypt a key, was this message encrypted for this keypair?")
+        }
+        val enc = ByteArray(buffer.remaining())
+        buffer.get(enc)
+        return AESEncryptionHandler.decrypt(enc, k)
     }
 
     /**
