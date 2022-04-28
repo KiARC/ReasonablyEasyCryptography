@@ -159,4 +159,37 @@ class AsymmetricEncryptionTest {
             assertTrue(keysUnpemed[i].encoded.contentEquals(keys[i].encoded))
         }
     }
+
+    @Test
+    fun testEncryptForMultipleRecipients() {
+        val recipient1 = RSAEncryptionHandler.generateKeyPair()
+        val recipient2 = RSAEncryptionHandler.generateKeyPair()
+        val recipientKeys = ArrayList<PublicKey>(2)
+        recipientKeys.add(recipient1.public)
+        recipientKeys.add(recipient2.public)
+        val goal = ByteArray(1024)
+        Random().nextBytes(goal)
+        val encrypted = RSAEncryptionHandler.encrypt(goal, recipientKeys)
+        val decrypted1 = RSAEncryptionHandler.decrypt(encrypted, recipient1.private)
+        val decrypted2 = RSAEncryptionHandler.decrypt(encrypted, recipient2.private)
+        assertTrue(decrypted1.contentEquals(goal) && decrypted1.contentEquals(decrypted2))
+    }
+
+    @Test
+    fun testAllForMultipleRecipients() {
+        val sender = RSAEncryptionHandler.generateKeyPair()
+        val recipient1 = RSAEncryptionHandler.generateKeyPair()
+        val recipient2 = RSAEncryptionHandler.generateKeyPair()
+        val recipientKeys = ArrayList<PublicKey>(2)
+        recipientKeys.add(recipient1.public)
+        recipientKeys.add(recipient2.public)
+        val goal = ByteArray(1024)
+        Random().nextBytes(goal)
+        val encrypted = RSAEncryptionHandler.encryptAndSign(goal, recipientKeys, sender.private)
+        val decrypted1 =
+            RSAEncryptionHandler.decryptAndVerify(encrypted, recipient1.private, sender.public)
+        val decrypted2 =
+            RSAEncryptionHandler.decryptAndVerify(encrypted, recipient2.private, sender.public)
+        assertTrue(decrypted1.contentEquals(goal) && decrypted1.contentEquals(decrypted2))
+    }
 }
