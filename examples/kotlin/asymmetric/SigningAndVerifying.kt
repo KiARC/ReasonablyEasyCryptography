@@ -1,6 +1,6 @@
 package kotlin.asymmetric
 
-import com.katiearose.reasonablyEasyCryptography.asymmetric.RSAEncryptionHandler
+import com.katiearose.reasonablyEasyCryptography.asymmetric.RSAHandler
 
 object SigningAndVerifying {
     @JvmStatic
@@ -8,10 +8,10 @@ object SigningAndVerifying {
         //Define message
         val message = "Hello World!"
         //Generate a KeyPair
-        val keys = RSAEncryptionHandler.generateKeyPair()
+        val keys = RSAHandler.generateKeyPair()
         //Generate signature
-        val signature = RSAEncryptionHandler.sign(message.toByteArray(), keys.private)
+        val signature = RSAHandler.sign(message.toByteArray(), keys.private)
         //Verify signature, value will be true if the signature is good and false if it's bad
-        val isValid = RSAEncryptionHandler.verify(message.toByteArray(), signature, keys.public)
+        val isValid = RSAHandler.verify(message.toByteArray(), signature, keys.public)
     }
 }

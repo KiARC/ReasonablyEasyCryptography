@@ -11,7 +11,7 @@ import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
 
-object AESEncryptionHandler {
+object AESHandler {
     private const val algorithm = "AES/GCM/NoPadding"
 
     /**

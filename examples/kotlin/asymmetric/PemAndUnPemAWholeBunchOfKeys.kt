@@ -1,7 +1,7 @@
 package kotlin.asymmetric
 
 import com.katiearose.reasonablyEasyCryptography.asymmetric.PEMHandler
-import com.katiearose.reasonablyEasyCryptography.asymmetric.RSAEncryptionHandler
+import com.katiearose.reasonablyEasyCryptography.asymmetric.RSAHandler
 import java.io.ByteArrayInputStream
 import java.security.Key
 
@@ -12,7 +12,7 @@ object PemAndUnPemAWholeBunchOfKeys {
         //list of keys and decided this would be a good way to do it
         val keys = ArrayList<Key>()
         for (i in 1..10) {
-            val k = RSAEncryptionHandler.generateKeyPair()
+            val k = RSAHandler.generateKeyPair()
             keys.add(k.private)
             keys.add(k.public)
         }

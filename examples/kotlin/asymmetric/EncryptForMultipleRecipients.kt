@@ -1,9 +1,8 @@
 package kotlin.asymmetric
 
-import com.katiearose.reasonablyEasyCryptography.asymmetric.RSAEncryptionHandler.generateKeyPair
-import com.katiearose.reasonablyEasyCryptography.asymmetric.RSAEncryptionHandler.encrypt
-import com.katiearose.reasonablyEasyCryptography.asymmetric.RSAEncryptionHandler.decrypt
-import com.katiearose.reasonablyEasyCryptography.asymmetric.RSAEncryptionHandler
+import com.katiearose.reasonablyEasyCryptography.asymmetric.RSAHandler.generateKeyPair
+import com.katiearose.reasonablyEasyCryptography.asymmetric.RSAHandler.encrypt
+import com.katiearose.reasonablyEasyCryptography.asymmetric.RSAHandler.decrypt
 import java.security.PublicKey
 import java.util.ArrayList
 

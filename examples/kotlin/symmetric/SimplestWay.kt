@@ -1,6 +1,6 @@
 package kotlin.symmetric
 
-import com.katiearose.reasonablyEasyCryptography.symmetric.AESEncryptionHandler
+import com.katiearose.reasonablyEasyCryptography.symmetric.AESHandler
 
 object SimplestWay {
     @JvmStatic
@@ -8,8 +8,8 @@ object SimplestWay {
         //Define plaintext
         val plaintext = "Hello World!"
         //Encrypt it with a password
-        val ciphertext = AESEncryptionHandler.encrypt(plaintext.toByteArray(), "password")
+        val ciphertext = AESHandler.encrypt(plaintext.toByteArray(), "password")
         //Decrypt it with the same password
-        val decrypted = String(AESEncryptionHandler.decrypt(ciphertext, "password"))
+        val decrypted = String(AESHandler.decrypt(ciphertext, "password"))
     }
 }

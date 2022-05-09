@@ -1,13 +1,13 @@
 package com.katiearose.reasonablyEasyCryptography.asymmetric
 
-import com.katiearose.reasonablyEasyCryptography.symmetric.AESEncryptionHandler
+import com.katiearose.reasonablyEasyCryptography.symmetric.AESHandler
 import java.nio.ByteBuffer
 import java.security.*
 import javax.crypto.BadPaddingException
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
 
-object RSAEncryptionHandler {
+object RSAHandler {
     /**
      * Generates an RSA KeyPair of a given keysize to be used for encryption
      *
@@ -35,8 +35,8 @@ object RSAEncryptionHandler {
      */
     @JvmStatic
     fun encrypt(data: ByteArray, key: PublicKey): ByteArray {
-        val k = AESEncryptionHandler.generateKey(128)
-        val encryptedData = AESEncryptionHandler.encrypt(data, k)
+        val k = AESHandler.generateKey(128)
+        val encryptedData = AESHandler.encrypt(data, k)
         val c = Cipher.getInstance("RSA/ECB/OAEPwithSHA-256andMGF1Padding")
         c.init(Cipher.ENCRYPT_MODE, key)
         val kEnc = c.doFinal(k.encoded)
@@ -65,8 +65,8 @@ object RSAEncryptionHandler {
             throw RuntimeException("More than 256 recipients specified at once")
         }
         val encryptedSecrets = ArrayList<ByteArray>(keys.size)
-        val k = AESEncryptionHandler.generateKey(128)
-        val encryptedData = AESEncryptionHandler.encrypt(data, k)
+        val k = AESHandler.generateKey(128)
+        val encryptedData = AESHandler.encrypt(data, k)
         for (key in keys) {
             val c = Cipher.getInstance("RSA/ECB/OAEPwithSHA-256andMGF1Padding")
             c.init(Cipher.ENCRYPT_MODE, key)
@@ -109,7 +109,7 @@ object RSAEncryptionHandler {
         var k: SecretKey? = null
         while (!foundKey) {
             try {
-                k = AESEncryptionHandler.assembleKey(c.doFinal(kbs.removeFirst()))
+                k = AESHandler.assembleKey(c.doFinal(kbs.removeFirst()))
                 foundKey = true
             } catch (_: BadPaddingException) { /*Ignore that, it just means that wasn't the right one*/
             }
@@ -119,7 +119,7 @@ object RSAEncryptionHandler {
         }
         val enc = ByteArray(buffer.remaining())
         buffer.get(enc)
-        return AESEncryptionHandler.decrypt(enc, k)
+        return AESHandler.decrypt(enc, k)
     }
 
     /**
@@ -149,8 +149,8 @@ object RSAEncryptionHandler {
         buffer.get(kB)
         val enc = ByteArray(buffer.remaining())
         buffer.get(enc)
-        val k = AESEncryptionHandler.assembleKey(c.doFinal(kB))
-        return AESEncryptionHandler.decrypt(enc, k)
+        val k = AESHandler.assembleKey(c.doFinal(kB))
+        return AESHandler.decrypt(enc, k)
     }
 
     /**

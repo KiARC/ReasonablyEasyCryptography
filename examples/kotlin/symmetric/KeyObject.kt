@@ -1,6 +1,6 @@
 package kotlin.symmetric
 
-import com.katiearose.reasonablyEasyCryptography.symmetric.AESEncryptionHandler
+import com.katiearose.reasonablyEasyCryptography.symmetric.AESHandler
 
 object KeyObject {
     @JvmStatic
@@ -8,10 +8,10 @@ object KeyObject {
         //Define plaintext
         val plaintext = "Hello World!"
         //Create a SecretKey. You can also specify a keysize but the default (256) is fine.
-        val key = AESEncryptionHandler.generateKey()
+        val key = AESHandler.generateKey()
         //Encrypt the plaintext with it
-        val ciphertext = AESEncryptionHandler.encrypt(plaintext.toByteArray(), key)
+        val ciphertext = AESHandler.encrypt(plaintext.toByteArray(), key)
         //Decrypt it with the same key
-        val decrypted = String(AESEncryptionHandler.decrypt(ciphertext, key))
+        val decrypted = String(AESHandler.decrypt(ciphertext, key))
     }
 }

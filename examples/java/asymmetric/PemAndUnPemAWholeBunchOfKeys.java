@@ -2,7 +2,7 @@ package java.asymmetric;
 
 import com.katiearose.reasonablyEasyCryptography.asymmetric.PEMHandler;
 import com.katiearose.reasonablyEasyCryptography.asymmetric.PEMObject;
-import com.katiearose.reasonablyEasyCryptography.asymmetric.RSAEncryptionHandler;
+import com.katiearose.reasonablyEasyCryptography.asymmetric.RSAHandler;
 
 import java.io.ByteArrayInputStream;
 import java.security.Key;
@@ -16,7 +16,7 @@ public class PemAndUnPemAWholeBunchOfKeys {
         //list of keys and decided this would be a good way to do it
         ArrayList<Key> keys = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            KeyPair k = RSAEncryptionHandler.generateKeyPair();
+            KeyPair k = RSAHandler.generateKeyPair();
             keys.add(k.getPrivate());
             keys.add(k.getPublic());
         }
