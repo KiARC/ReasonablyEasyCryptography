@@ -6,10 +6,12 @@
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/KiARC/ReasonablyEasyCryptography?style=for-the-badge)
 ![GitHub Release Date](https://img.shields.io/github/release-date/KiARC/ReasonablyEasyCryptography?style=for-the-badge)
 
-Welcome to **Reasonably Easy Cryptography**, a library designed to do most of the setup for you. Although configuration
-is great, sometimes what you need is a library that just works right out of the box. That's why this one exists. The
-goal of this project is to create a library that enables anyone to perform encryption and cryptography with minimal work
-or understanding of the underlying principals.
+Welcome to **Reasonably Easy Cryptography**, a library designed to from the ground up to provide sane defaults and to
+minimize the amount of code you need to write to do cryptography in your own projects. REC's goal is to have a default
+value for every feasible parameter so that you can spend less time configuring and more time working on other things.
+REC is not inflexible, however, as nearly all of these defaults can be easily overridden with simple parameters. Whether
+you're just looking to get encryption over with, or a total cryptography nerd wanting to play with different
+configurations, REC is the tool for you.
 
 ## Importing into a project
 
