@@ -13,9 +13,7 @@ or understanding of the underlying principals.
 
 ## Importing into a project
 
-You can either directly add a release JAR (or one built with `gradle jar`), or you can use `gradle publishToMavenLocal`
-to add it to your local Maven repository. If you add it to `mavenLocal` it can be accessed
-at `com.katiearose:reasonably-easy-cryptography:[release]`.
+Download the latest release from the releases page and add it to your dependencies in your IDE.
 
 ## Examples
 

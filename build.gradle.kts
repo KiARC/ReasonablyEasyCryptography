@@ -36,34 +36,3 @@ tasks.jar {
         )
     }
 }
-
-publishing {
-    publications {
-        create<MavenPublication>("mavenJava") {
-            groupId = "com.katiearose"
-            artifactId = "reasonably-easy-cryptography"
-
-            version = "4.0.1"
-            from(components["java"])
-            pom {
-                name.set("Reasonably Easy Cryptography")
-                description.set("Usable cryptography for everyone!")
-                licenses {
-                    license {
-                        name.set("GNU GENERAL PUBLIC LICENSE, Version 3.0")
-                    }
-                    license {
-                        name.set("GNU LESSER GENERAL PUBLIC LICENSE, Version 3.0")
-                    }
-                }
-                developers {
-                    developer {
-                        id.set("KiARC")
-                        name.set("Katherine Rose")
-                        email.set("katiearose@protonmail.com")
-                    }
-                }
-            }
-        }
-    }
-}
