@@ -42,6 +42,7 @@ publishing {
         create<MavenPublication>("mavenJava") {
             groupId = "com.katiearose"
             artifactId = "reasonably-easy-cryptography"
+
             version = "4.0.1"
             from(components["java"])
             pom {
