@@ -7,20 +7,28 @@ import javax.crypto.BadPaddingException
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
 
+/**
+ * Static methods to handle RSA cryptography (keygen, sign/verify and encrypt/decrypt)
+ *
+ * @author Katherine Rose
+ */
 object RSAHandler {
-    private const val DEFAULT_ENC_ALGO = "RSA/ECB/OAEPwithSHA-256andMGF1Padding"
-    private const val DEFAULT_SIG_ALGO = "SHA256withRSA"
+    //Sane Defaults
+    const val DEFAULT_ENC_ALGO = "RSA/ECB/OAEPwithSHA-256andMGF1Padding"
+    const val DEFAULT_SIG_ALGO = "SHA256withRSA"
+    const val DEFAULT_KEY_SIZE = 2048
+    const val DEFAULT_SECRET_SIZE = 256
 
     /**
      * Generates an RSA KeyPair of a given keysize to be used for encryption
      *
      * @author Katherine Rose
-     * @param keySize the size in bits of the key to generate
+     * @param keySize the size in bits of the key to generate (optional)
      * @return a new KeyPair
      */
     @JvmOverloads
     @JvmStatic
-    fun generateKeyPair(keySize: Int = 2048): KeyPair {
+    fun generateKeyPair(keySize: Int = DEFAULT_KEY_SIZE): KeyPair {
         val gen: KeyPairGenerator = KeyPairGenerator.getInstance("RSA")
         gen.initialize(keySize)
         return gen.generateKeyPair()
@@ -34,6 +42,8 @@ object RSAHandler {
      * @author Katherine Rose
      * @param data the data to encrypt
      * @param key the key to use for encryption
+     * @param algorithm the algorithm to use for encryption (optional)
+     * @param secretKeySize the size of the AES secret key to use for encryption (optional)
      * @return the encrypted data and its encrypted symmetric key
      */
     @JvmOverloads
@@ -42,7 +52,7 @@ object RSAHandler {
         data: ByteArray,
         key: PublicKey,
         algorithm: String = DEFAULT_ENC_ALGO,
-        secretKeySize: Int = 256
+        secretKeySize: Int = DEFAULT_SECRET_SIZE
     ): ByteArray {
         val k = AESHandler.generateKey(secretKeySize)
         val encryptedData = AESHandler.encrypt(data, k)
@@ -66,6 +76,8 @@ object RSAHandler {
      * @author Katherine Rose
      * @param data the data to encrypt
      * @param keys the keys to use for encryption
+     * @param algorithm the algorithm to use for encryption (optional)
+     * @param secretKeySize the size of the AES secret key to use for encryption (optional)
      * @return the encrypted data and its encrypted symmetric keys
      */
     @JvmOverloads
@@ -74,7 +86,7 @@ object RSAHandler {
         data: ByteArray,
         keys: List<PublicKey>,
         algorithm: String = DEFAULT_ENC_ALGO,
-        secretKeySize: Int = 256
+        secretKeySize: Int = DEFAULT_SECRET_SIZE
     ): ByteArray {
         if (keys.size > 256) {
             throw RuntimeException("More than 256 recipients specified at once")
@@ -104,6 +116,8 @@ object RSAHandler {
      * @author Katherine Rose
      * @param data the data to decrypt
      * @param key the key to use for decryption
+     * @param algorithm the algorithm to use for decryption (optional, must be the same as the value used for encryption)
+     * @param secretKeySize the size of the AES secret key to use for decryption (optional, must be the same as the value used for encryption)
      * @return the decrypted data
      */
     @JvmOverloads
@@ -112,7 +126,7 @@ object RSAHandler {
         data: ByteArray,
         key: PrivateKey,
         algorithm: String = DEFAULT_ENC_ALGO,
-        secretKeySize: Int = 256
+        secretKeySize: Int = DEFAULT_SECRET_SIZE
     ): ByteArray {
         val c = Cipher.getInstance(algorithm)
         c.init(Cipher.DECRYPT_MODE, key)
@@ -181,6 +195,7 @@ object RSAHandler {
      * @author Katherine Rose
      * @param data the data to sign
      * @param key the key to sign with
+     * @param algorithm the algorithm to use for signing (optional)
      * @return a signature generated from the data and the key
      */
     @JvmOverloads
@@ -199,6 +214,7 @@ object RSAHandler {
      * @param data the data to verify the signature against
      * @param sig the signature to be verified
      * @param key the key to use for verification (i.e. the public counterpart to the private key that created the signature)
+     * @param algorithm the algorithm to use for verification (optional, must be the same as the value used for signing)
      * @return true if the signature is valid, false if not
      */
     @JvmOverloads
@@ -217,6 +233,9 @@ object RSAHandler {
      * @param data the data to encrypt and sign
      * @param encryptionKey the key to use for encryption
      * @param signingKey the key to use for signing
+     * @param encryptionAlgorithm the algorithm to use for encryption (optional)
+     * @param secretKeySize the size of the AES secret key to use for encryption (optional)
+     * @param signatureAlgorithm the algorithm to use for signing (optional)
      * @return a SignedDataContainer
      */
     @JvmOverloads
@@ -226,7 +245,7 @@ object RSAHandler {
         encryptionKey: PublicKey,
         signingKey: PrivateKey,
         encryptionAlgorithm: String = DEFAULT_ENC_ALGO,
-        secretKeySize: Int = 256,
+        secretKeySize: Int = DEFAULT_SECRET_SIZE,
         signatureAlgorithm: String = DEFAULT_SIG_ALGO
     ): SignedDataContainer {
         val enc = encrypt(data, encryptionKey, encryptionAlgorithm, secretKeySize)
@@ -241,6 +260,9 @@ object RSAHandler {
      * @param data the data to encrypt and sign
      * @param encryptionKeys the keys to use for encryption
      * @param signingKey the key to use for signing
+     * @param encryptionAlgorithm the algorithm to use for encryption (optional)
+     * @param secretKeySize the size of the AES secret key to use for encryption (optional)
+     * @param signatureAlgorithm the algorithm to use for signing (optional)
      * @return a SignedDataContainer
      */
     @JvmOverloads
@@ -250,7 +272,7 @@ object RSAHandler {
         encryptionKeys: List<PublicKey>,
         signingKey: PrivateKey,
         encryptionAlgorithm: String = DEFAULT_ENC_ALGO,
-        secretKeySize: Int = 256,
+        secretKeySize: Int = DEFAULT_SECRET_SIZE,
         signatureAlgorithm: String = DEFAULT_SIG_ALGO
     ): SignedDataContainer {
         val enc = encrypt(data, encryptionKeys, encryptionAlgorithm, secretKeySize)
@@ -269,6 +291,9 @@ object RSAHandler {
      * @param decryptionKey the key to use for decryption
      * @param verificationKey the key to use for verification of the signature
      * @param exceptionOnFailure whether to throw an exception if the signature is invalid or not, if false it will return null instead
+     * @param decryptionAlgorithm the algorithm to use for decryption (optional, must be the same as the value used for encryption)
+     * @param secretKeySize the size of the AES secret key to use for decryption (optional, must be the same as the value used for encryption)
+     * @param verificationAlgorithm the algorithm to use for verification (optional, must be the same as the value used for signing)
      * @return the decrypted data, or null if the signature is invalid and exceptionOnFailure is false
      * @throws SecurityException if the signature is invalid and exceptionOnFailure is true
      */
@@ -280,7 +305,7 @@ object RSAHandler {
         verificationKey: PublicKey,
         exceptionOnFailure: Boolean = true,
         decryptionAlgorithm: String = DEFAULT_ENC_ALGO,
-        secretKeySize: Int = 256,
+        secretKeySize: Int = DEFAULT_SECRET_SIZE,
         verificationAlgorithm: String = DEFAULT_SIG_ALGO
     ): ByteArray? {
         return if (verify(dataAndSig.data, dataAndSig.signature, verificationKey, verificationAlgorithm)) decrypt(
@@ -303,6 +328,9 @@ object RSAHandler {
      * @param decryptionKey the key to use for decryption
      * @param verificationKey the key to use for verification of the signature
      * @param exceptionOnFailure whether to throw an exception if the signature is invalid or not, if false it will return null instead
+     * @param decryptionAlgorithm the algorithm to use for decryption (optional, must be the same as the value used for encryption)
+     * @param secretKeySize the size of the AES secret key to use for decryption (optional, must be the same as the value used for encryption)
+     * @param verificationAlgorithm the algorithm to use for verification (optional, must be the same as the value used for signing
      * @return the decrypted data, or null if the signature is invalid and exceptionOnFailure is false
      * @throws SecurityException if the signature is invalid and exceptionOnFailure is true
      */
@@ -315,7 +343,7 @@ object RSAHandler {
         verificationKey: PublicKey,
         exceptionOnFailure: Boolean = true,
         decryptionAlgorithm: String = DEFAULT_ENC_ALGO,
-        secretKeySize: Int = 256,
+        secretKeySize: Int = DEFAULT_SECRET_SIZE,
         verificationAlgorithm: String = DEFAULT_SIG_ALGO
     ): ByteArray? {
         return if (verify(data, sig, verificationKey, verificationAlgorithm)) decrypt(
