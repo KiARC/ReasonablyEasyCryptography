@@ -18,6 +18,3 @@ jobs:
 
       - name: Gradle Build
         run: ./gradlew build
-
-      - name: Gradle Test
-        run: ./gradlew test
