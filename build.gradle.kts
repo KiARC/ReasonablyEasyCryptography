@@ -1,5 +1,5 @@
 group = "com.katiearose"
-version = "4.0.1"
+version = "5.1.0"
 
 repositories {
     mavenCentral()
