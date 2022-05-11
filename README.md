@@ -22,3 +22,9 @@ at `com.katiearose:reasonably-easy-cryptography:[release]`.
 Numerous examples can be found in [the "examples" directory](examples/) detailing the usage of this library. The files
 named "SimplestWay" are meant to illustrate the easiest way to use a subset of the library, such as AES or RSA
 encryption.
+
+## Configuration
+
+Although the intent of this project is to minimize configuration, there are optional parameters to most methods to allow
+overriding the default settings. They're somewhat self-explanatory so for those who really need them, they're there. If
+you don't know what one of them means, you probably don't need to change it.
