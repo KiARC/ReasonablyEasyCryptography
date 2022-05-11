@@ -12,7 +12,8 @@ import javax.crypto.spec.SecretKeySpec
 
 
 object AESHandler {
-    private const val algorithm = "AES/GCM/NoPadding"
+    private const val DEFAULT_ENC_ALGO = "AES/GCM/NoPadding"
+    private const val DEFAULT_KD_ALGO = "PBKDF2WithHmacSHA1"
 
     /**
      * Generates a new SecretKey with the provided password which can be used for encryption
@@ -21,12 +22,13 @@ object AESHandler {
      * @param password the desired password
      * @return a new SecretKey instance
      */
+    @JvmOverloads
     @JvmStatic
-    fun stringToKey(password: String): SecretKey {
+    fun stringToKey(password: String, algorithm: String = DEFAULT_KD_ALGO): SecretKey {
         val salt = ByteArray(16)
         SecureRandom().nextBytes(salt)
         val spec = PBEKeySpec(password.toCharArray(), salt, 65536, 256)
-        val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1")
+        val factory = SecretKeyFactory.getInstance(algorithm)
         return SecretKeySpec(factory.generateSecret(spec).encoded, "AES")
     }
 
@@ -64,12 +66,13 @@ object AESHandler {
      * @param password the desired password
      * @return a new Pair containing a SecretKey instance and its salt
      */
+    @JvmOverloads
     @JvmStatic
-    fun stringToKeyAndSalt(password: String): Pair<SecretKey, ByteArray> {
+    fun stringToKeyAndSalt(password: String, algorithm: String = DEFAULT_KD_ALGO): Pair<SecretKey, ByteArray> {
         val salt = ByteArray(16)
         SecureRandom().nextBytes(salt)
         val spec = PBEKeySpec(password.toCharArray(), salt, 65536, 256)
-        val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1")
+        val factory = SecretKeyFactory.getInstance(algorithm)
         return Pair(SecretKeySpec(factory.generateSecret(spec).encoded, "AES"), salt)
     }
 
@@ -82,10 +85,11 @@ object AESHandler {
      * @param salt the desired salt
      * @return a new SecretKey instance
      */
+    @JvmOverloads
     @JvmStatic
-    fun stringAndSaltToKey(password: String, salt: ByteArray): SecretKey {
+    fun stringAndSaltToKey(password: String, salt: ByteArray, algorithm: String = DEFAULT_KD_ALGO): SecretKey {
         val spec = PBEKeySpec(password.toCharArray(), salt, 65536, 256)
-        val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1")
+        val factory = SecretKeyFactory.getInstance(algorithm)
         return SecretKeySpec(factory.generateSecret(spec).encoded, "AES")
     }
 
@@ -99,8 +103,9 @@ object AESHandler {
      * @param key the key to use to encrypt plain
      * @return unencrypted data encrypted with password
      */
+    @JvmOverloads
     @JvmStatic
-    fun encrypt(plain: ByteArray, key: SecretKey): ByteArray {
+    fun encrypt(plain: ByteArray, key: SecretKey, algorithm: String = DEFAULT_ENC_ALGO): ByteArray {
         val nonce = ByteArray(12)
         SecureRandom().nextBytes(nonce)
         val cipher = Cipher.getInstance(algorithm)
@@ -122,8 +127,9 @@ object AESHandler {
      * @param key the password to use to encrypt plain
      * @return unencrypted data encrypted with password
      */
+    @JvmOverloads
     @JvmStatic
-    fun encrypt(plain: ByteArray, key: String): ByteArray {
+    fun encrypt(plain: ByteArray, key: String, algorithm: String = DEFAULT_ENC_ALGO): ByteArray {
         val nonce = ByteArray(12)
         SecureRandom().nextBytes(nonce)
         val cipher = Cipher.getInstance(algorithm)
@@ -151,8 +157,9 @@ object AESHandler {
      * @param key the key to use to decrypt plain
      * @return encrypted data decrypted with key
      */
+    @JvmOverloads
     @JvmStatic
-    fun decrypt(encrypted: ByteArray, key: SecretKey): ByteArray {
+    fun decrypt(encrypted: ByteArray, key: SecretKey, algorithm: String = DEFAULT_ENC_ALGO): ByteArray {
         val buffer = ByteBuffer.wrap(encrypted)
         val nonce = ByteArray(12)
         buffer.get(nonce)
@@ -173,8 +180,9 @@ object AESHandler {
      * @param key the password to use to decrypt plain
      * @return encrypted data decrypted with password
      */
+    @JvmOverloads
     @JvmStatic
-    fun decrypt(encrypted: ByteArray, key: String): ByteArray {
+    fun decrypt(encrypted: ByteArray, key: String, algorithm: String = DEFAULT_ENC_ALGO): ByteArray {
         val buffer = ByteBuffer.wrap(encrypted)
         val salt = ByteArray(16)
         buffer.get(salt)

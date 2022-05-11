@@ -8,6 +8,9 @@ import javax.crypto.Cipher
 import javax.crypto.SecretKey
 
 object RSAHandler {
+    private const val DEFAULT_ENC_ALGO = "RSA/ECB/OAEPwithSHA-256andMGF1Padding"
+    private const val DEFAULT_SIG_ALGO = "SHA256withRSA"
+
     /**
      * Generates an RSA KeyPair of a given keysize to be used for encryption
      *
@@ -33,11 +36,17 @@ object RSAHandler {
      * @param key the key to use for encryption
      * @return the encrypted data and its encrypted symmetric key
      */
+    @JvmOverloads
     @JvmStatic
-    fun encrypt(data: ByteArray, key: PublicKey): ByteArray {
-        val k = AESHandler.generateKey(128)
+    fun encrypt(
+        data: ByteArray,
+        key: PublicKey,
+        algorithm: String = DEFAULT_ENC_ALGO,
+        secretKeySize: Int = 256
+    ): ByteArray {
+        val k = AESHandler.generateKey(secretKeySize)
         val encryptedData = AESHandler.encrypt(data, k)
-        val c = Cipher.getInstance("RSA/ECB/OAEPwithSHA-256andMGF1Padding")
+        val c = Cipher.getInstance(algorithm)
         c.init(Cipher.ENCRYPT_MODE, key)
         val kEnc = c.doFinal(k.encoded)
         val output = ByteBuffer.allocate(kEnc.size + encryptedData.size + 1)
@@ -59,16 +68,22 @@ object RSAHandler {
      * @param keys the keys to use for encryption
      * @return the encrypted data and its encrypted symmetric keys
      */
+    @JvmOverloads
     @JvmStatic
-    fun encrypt(data: ByteArray, keys: List<PublicKey>): ByteArray {
+    fun encrypt(
+        data: ByteArray,
+        keys: List<PublicKey>,
+        algorithm: String = DEFAULT_ENC_ALGO,
+        secretKeySize: Int = 256
+    ): ByteArray {
         if (keys.size > 256) {
             throw RuntimeException("More than 256 recipients specified at once")
         }
         val encryptedSecrets = ArrayList<ByteArray>(keys.size)
-        val k = AESHandler.generateKey(128)
+        val k = AESHandler.generateKey(secretKeySize)
         val encryptedData = AESHandler.encrypt(data, k)
         for (key in keys) {
-            val c = Cipher.getInstance("RSA/ECB/OAEPwithSHA-256andMGF1Padding")
+            val c = Cipher.getInstance(algorithm)
             c.init(Cipher.ENCRYPT_MODE, key)
             encryptedSecrets.add(c.doFinal(k.encoded))
         }
@@ -91,17 +106,24 @@ object RSAHandler {
      * @param key the key to use for decryption
      * @return the decrypted data
      */
+    @JvmOverloads
     @JvmStatic
-    fun decrypt(data: ByteArray, key: PrivateKey): ByteArray {
-        val c = Cipher.getInstance("RSA/ECB/OAEPwithSHA-256andMGF1Padding")
+    fun decrypt(
+        data: ByteArray,
+        key: PrivateKey,
+        algorithm: String = DEFAULT_ENC_ALGO,
+        secretKeySize: Int = 256
+    ): ByteArray {
+        val c = Cipher.getInstance(algorithm)
         c.init(Cipher.DECRYPT_MODE, key)
         val buffer = ByteBuffer.wrap(data)
         val rbyte = ByteArray(1)
         buffer.get(rbyte)
         val recipientCount = rbyte[0].toUByte()
-        val kbs = ArrayDeque<ByteArray>(recipientCount.toInt())
+        println(recipientCount.toInt() + 1)
+        val kbs = ArrayDeque<ByteArray>()
         for (i in 0 until recipientCount.toInt() + 1) {
-            val kB = ByteArray(256)
+            val kB = ByteArray(secretKeySize)
             buffer.get(kB)
             kbs.addFirst(kB)
         }
@@ -161,9 +183,10 @@ object RSAHandler {
      * @param key the key to sign with
      * @return a signature generated from the data and the key
      */
+    @JvmOverloads
     @JvmStatic
-    fun sign(data: ByteArray, key: PrivateKey): ByteArray {
-        val s = Signature.getInstance("SHA256withRSA")
+    fun sign(data: ByteArray, key: PrivateKey, algorithm: String = DEFAULT_SIG_ALGO): ByteArray {
+        val s = Signature.getInstance(algorithm)
         s.initSign(key)
         s.update(data)
         return s.sign()
@@ -178,9 +201,10 @@ object RSAHandler {
      * @param key the key to use for verification (i.e. the public counterpart to the private key that created the signature)
      * @return true if the signature is valid, false if not
      */
+    @JvmOverloads
     @JvmStatic
-    fun verify(data: ByteArray, sig: ByteArray, key: PublicKey): Boolean {
-        val s = Signature.getInstance("SHA256withRSA")
+    fun verify(data: ByteArray, sig: ByteArray, key: PublicKey, algorithm: String = DEFAULT_SIG_ALGO): Boolean {
+        val s = Signature.getInstance(algorithm)
         s.initVerify(key)
         s.update(data)
         return s.verify(sig)
@@ -195,14 +219,18 @@ object RSAHandler {
      * @param signingKey the key to use for signing
      * @return a SignedDataContainer
      */
+    @JvmOverloads
     @JvmStatic
     fun encryptAndSign(
         data: ByteArray,
         encryptionKey: PublicKey,
-        signingKey: PrivateKey
+        signingKey: PrivateKey,
+        encryptionAlgorithm: String = DEFAULT_ENC_ALGO,
+        secretKeySize: Int = 256,
+        signatureAlgorithm: String = DEFAULT_SIG_ALGO
     ): SignedDataContainer {
-        val enc = encrypt(data, encryptionKey)
-        val sig = sign(enc, signingKey)
+        val enc = encrypt(data, encryptionKey, encryptionAlgorithm, secretKeySize)
+        val sig = sign(enc, signingKey, signatureAlgorithm)
         return SignedDataContainer(enc, sig)
     }
 
@@ -215,14 +243,18 @@ object RSAHandler {
      * @param signingKey the key to use for signing
      * @return a SignedDataContainer
      */
+    @JvmOverloads
     @JvmStatic
     fun encryptAndSign(
         data: ByteArray,
         encryptionKeys: List<PublicKey>,
-        signingKey: PrivateKey
+        signingKey: PrivateKey,
+        encryptionAlgorithm: String = DEFAULT_ENC_ALGO,
+        secretKeySize: Int = 256,
+        signatureAlgorithm: String = DEFAULT_SIG_ALGO
     ): SignedDataContainer {
-        val enc = encrypt(data, encryptionKeys)
-        val sig = sign(enc, signingKey)
+        val enc = encrypt(data, encryptionKeys, encryptionAlgorithm, secretKeySize)
+        val sig = sign(enc, signingKey, signatureAlgorithm)
         return SignedDataContainer(enc, sig)
     }
 
@@ -246,11 +278,16 @@ object RSAHandler {
         dataAndSig: SignedDataContainer,
         decryptionKey: PrivateKey,
         verificationKey: PublicKey,
-        exceptionOnFailure: Boolean = true
+        exceptionOnFailure: Boolean = true,
+        decryptionAlgorithm: String = DEFAULT_ENC_ALGO,
+        secretKeySize: Int = 256,
+        verificationAlgorithm: String = DEFAULT_SIG_ALGO
     ): ByteArray? {
-        return if (verify(dataAndSig.data, dataAndSig.signature, verificationKey)) decrypt(
+        return if (verify(dataAndSig.data, dataAndSig.signature, verificationKey, verificationAlgorithm)) decrypt(
             dataAndSig.data,
-            decryptionKey
+            decryptionKey,
+            decryptionAlgorithm,
+            secretKeySize
         )
         else if (exceptionOnFailure) throw SecurityException("Signature verification failed.")
         else null
@@ -276,9 +313,17 @@ object RSAHandler {
         sig: ByteArray,
         decryptionKey: PrivateKey,
         verificationKey: PublicKey,
-        exceptionOnFailure: Boolean = true
+        exceptionOnFailure: Boolean = true,
+        decryptionAlgorithm: String = DEFAULT_ENC_ALGO,
+        secretKeySize: Int = 256,
+        verificationAlgorithm: String = DEFAULT_SIG_ALGO
     ): ByteArray? {
-        return if (verify(data, sig, verificationKey)) decrypt(data, decryptionKey)
+        return if (verify(data, sig, verificationKey, verificationAlgorithm)) decrypt(
+            data,
+            decryptionKey,
+            decryptionAlgorithm,
+            secretKeySize
+        )
         else if (exceptionOnFailure) throw SecurityException("Signature verification failed.")
         else null
     }
