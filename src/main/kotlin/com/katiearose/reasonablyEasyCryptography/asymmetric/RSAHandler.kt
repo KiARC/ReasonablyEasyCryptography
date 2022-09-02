@@ -3,9 +3,12 @@ package com.katiearose.reasonablyEasyCryptography.asymmetric
 import com.katiearose.reasonablyEasyCryptography.symmetric.AESHandler
 import java.nio.ByteBuffer
 import java.security.*
+import java.security.interfaces.RSAPrivateCrtKey
+import java.security.spec.RSAPublicKeySpec
 import javax.crypto.BadPaddingException
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
+
 
 /**
  * Static methods to handle RSA cryptography (keygen, sign/verify and encrypt/decrypt)
@@ -354,5 +357,12 @@ object RSAHandler {
         )
         else if (exceptionOnFailure) throw SecurityException("Signature verification failed.")
         else null
+    }
+
+    fun deriveKeyPair(privateKey: PrivateKey): KeyPair {
+        val privateKeyCert = privateKey as RSAPrivateCrtKey
+        val publicKeySpec = RSAPublicKeySpec(privateKeyCert.modulus, privateKeyCert.publicExponent)
+        val keyFactory = KeyFactory.getInstance("RSA")
+        return KeyPair(keyFactory.generatePublic(publicKeySpec), privateKey)
     }
 }

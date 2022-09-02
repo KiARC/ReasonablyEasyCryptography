@@ -142,4 +142,11 @@ class RSATest {
             RSAHandler.decryptAndVerify(encrypted, recipient2.private, sender.public)
         assertTrue(decrypted1.contentEquals(goal) && decrypted1.contentEquals(decrypted2))
     }
+
+    @Test
+    fun testDerivePubFromPriv() {
+        val original = RSAHandler.generateKeyPair()
+        val derived = RSAHandler.deriveKeyPair(original.private)
+        assertTrue { original.public == derived.public && original.private == derived.private }
+    }
 }
