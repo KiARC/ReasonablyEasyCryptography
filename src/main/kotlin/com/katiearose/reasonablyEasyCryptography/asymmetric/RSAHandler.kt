@@ -143,7 +143,6 @@ object RSAHandler {
         val rbyte = ByteArray(1)
         buffer.get(rbyte)
         val recipientCount = rbyte[0].toUByte()
-        println(recipientCount.toInt() + 1)
         val kbs = ArrayDeque<ByteArray>()
         for (i in 0 until recipientCount.toInt() + 1) {
             val kB = ByteArray(secretKeySize)
